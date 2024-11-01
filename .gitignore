@@ -1,0 +1,50 @@
+# General
+*.log
+*.cache
+*.bak
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# PHPStorm
+.idea/
+*.iml
+
+# Docker
+docker-compose.override.yml
+.docker
+
+# SQLite database
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# PHPUnit
+phpunit.xml
+phpunit.xml.dist
+/build/
+/coverage/
+
+# Logs and cache
+storage/logs/*
+storage/cache/*
+storage/framework/cache/*
+storage/framework/views/*
+storage/framework/sessions/*
+
+# Slim Framework specific
+config/container.php
+config/settings.php
+
+# Other
+.vscode/
