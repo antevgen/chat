@@ -30,7 +30,6 @@ docker-compose.override.yml
 *.db-journal
 
 # PHPUnit
-phpunit.xml
 phpunit.xml.dist
 /build/
 /coverage/
@@ -44,7 +43,6 @@ storage/framework/sessions/*
 
 # Slim Framework specific
 config/container.php
-config/settings.php
 
 # Other
 .vscode/
