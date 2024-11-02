@@ -9,6 +9,14 @@ if [ ! -d "vendor" ]; then
   composer install --no-dev --optimize-autoloader
 fi
 
+if [ ! -f "database.sqlite" ]; then
+  echo "Add sqlite db"
+  touch chat.sqlite
+  chown www-data:www-data chat.sqlite
+  chmod 777 chat.sqlite
+  vendor/bin/doctrine-migrations migrate
+fi
+
 # Start PHP-FPM
 echo "Starting PHP-FPM..."
 exec php-fpm

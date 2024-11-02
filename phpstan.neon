@@ -4,5 +4,5 @@ parameters:
     paths:
         - src
         - tests
-    ignoreErrors:
-        - '#Call to an undefined method App\\Entities\\.*#'
+#    ignoreErrors:
+#        -

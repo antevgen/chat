@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Services\GroupService;
+use App\Services\MessageService;
+use App\Services\UserService;
 use DI\Container;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -32,6 +35,18 @@ $container->set(EntityManagerInterface::class, function (ContainerInterface $con
 
     // Create the EntityManager
     return new EntityManager($connection, $config);
+});
+
+$container->set(UserService::class, function() use ($container) {
+    return new UserService($container->get(EntityManagerInterface::class));
+});
+
+$container->set(MessageService::class, function() use ($container) {
+    return new MessageService($container->get(EntityManagerInterface::class));
+});
+
+$container->set(GroupService::class, function() use ($container) {
+    return new GroupService($container->get(EntityManagerInterface::class));
 });
 
 return $container;

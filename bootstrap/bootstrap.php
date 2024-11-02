@@ -16,6 +16,7 @@ require __DIR__ . '/../config/dependencies.php';
 
 // Create and configure Slim app
 $app = AppFactory::create();
+$app->addBodyParsingMiddleware();
 
 // Register routes
 (require __DIR__ . '/../config/routes.php')($app);

@@ -5,6 +5,9 @@
     <!-- Define standard -->
     <rule ref="PSR12" />
 
+    <!-- Include the RequireStrictTypesSniff -->
+    <rule ref="Generic.PHP.RequireStrictTypes" />
+
     <!-- Include directories to analyze -->
     <file>src/</file>
     <file>tests/</file>
