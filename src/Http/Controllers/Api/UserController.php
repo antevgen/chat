@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Services\UserService;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class UserController
 {
@@ -12,7 +14,7 @@ class UserController
     {
     }
 
-    public function create(Request $request, Response $response): Response
+    public function create(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $request->getParsedBody();
         $username = $data['username'];

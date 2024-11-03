@@ -5,11 +5,13 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
+use App\Middleware\ValidationMiddleware;
+use Nyholm\Psr7\Response;
 use OpenApi\Generator;
 use Slim\App;
 use Slim\Psr7\Request;
-use Slim\Psr7\Response;
 use Slim\Routing\RouteCollectorProxy;
+use Respect\Validation\Validator as Assert;
 
 return static function (App $app) {
     $app->get('/docs/openapi.json', function (Request $request, Response $response) {
@@ -29,7 +31,7 @@ return static function (App $app) {
             ->withStatus(301);
     });
 
-    $app->group('/api', function (RouteCollectorProxy $apiGroup) {
+    $app->group('/api', function (RouteCollectorProxy $apiGroup) use ($app) {
         $apiGroup->get('', function (Request $request, Response $response) {
             return $response
                 ->withHeader('Location', '/swagger-ui/')
@@ -45,8 +47,14 @@ return static function (App $app) {
             $group->get('/{id}/messages', [MessageController::class, 'getMessagesByGroup']);
         });
 
-        $apiGroup->group('/users', function (RouteCollectorProxy $group) {
-            $group->post('', [UserController::class, 'create']);
+        $apiGroup->group('/users', function (RouteCollectorProxy $group) use ($app) {
+            $group->post('', [UserController::class, 'create'])
+                ->add(
+                    $app->getContainer()?->get(ValidationMiddleware::class)
+                        ->setRules([
+                            'username' => Assert::alnum()->noWhitespace()->length(3, 15),
+                        ])
+                );
         });
 
         $apiGroup->group('/messages', function (RouteCollectorProxy $messages) {

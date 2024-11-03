@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
+use DI\ContainerBuilder;
 use Dotenv\Dotenv;
-use Slim\Factory\AppFactory;
+use Slim\App;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -11,14 +12,8 @@ require __DIR__ . '/../vendor/autoload.php';
 $dotenv = Dotenv::createImmutable(__DIR__. '/../');
 $dotenv->load();
 
-// Register dependencies
-require __DIR__ . '/../config/dependencies.php';
+$container = (new ContainerBuilder())
+    ->addDefinitions(__DIR__ . '/../config/container.php')
+    ->build();
 
-// Create and configure Slim app
-$app = AppFactory::create();
-$app->addBodyParsingMiddleware();
-
-// Register routes
-(require __DIR__ . '/../config/routes.php')($app);
-
-return $app;
+return $container->get(App::class);

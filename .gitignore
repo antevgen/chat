@@ -25,9 +25,7 @@ docker-compose.override.yml
 
 # SQLite database
 *.sqlite
-*.sqlite3
-*.db
-*.db-journal
+
 
 # PHPUnit
 phpunit.xml.dist
@@ -35,14 +33,7 @@ phpunit.xml.dist
 /coverage/
 
 # Logs and cache
-storage/logs/*
-storage/cache/*
-storage/framework/cache/*
-storage/framework/views/*
-storage/framework/sessions/*
-
-# Slim Framework specific
-config/container.php
+logs/*
 
 # Other
 .vscode/

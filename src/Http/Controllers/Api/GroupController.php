@@ -6,8 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Psr7\Request;
-use Slim\Psr7\Response;
+use Psr\Http\Message\ServerRequestInterface;
 
 class GroupController
 {
@@ -26,7 +25,7 @@ class GroupController
             )
         ]
     )]
-    public function list(Request $request, Response $response): ResponseInterface
+    public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         // Code to retrieve and return a list of groups
     }
