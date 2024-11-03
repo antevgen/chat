@@ -26,7 +26,8 @@ return [
         'metadata_dirs' => [__DIR__ . '/../src/Entity'],
         'connection' => [
             'driver' => 'pdo_sqlite',
-            'path' => __DIR__ . '/../' . $_ENV['DB_PATH'],
+            'path' => $_ENV['DB_PATH'],
+            'url' => $_ENV['DATABASE_URL'] ?? null,
         ]
     ]
 ];

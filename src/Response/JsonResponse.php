@@ -14,6 +14,10 @@ class JsonResponse
     ): ResponseInterface {
         $response = $response->withHeader('Content-Type', 'application/json');
 
+        if (is_object($data) && method_exists($data, 'toArray')) {
+            $data = $data->toArray();
+        }
+
         $response->getBody()->write(
             (string)json_encode(
                 $data,

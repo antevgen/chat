@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\GroupRepository;
 use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Attributes as OA;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: 'groups')]
 #[OA\Schema(
     schema: "Group",
@@ -50,5 +51,16 @@ class Group
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
     }
 }

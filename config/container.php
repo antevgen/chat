@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Entity\Group;
 use App\Middleware\ExceptionMiddleware;
 use App\Middleware\ValidationMiddleware;
+use App\Repository\GroupRepository;
 use App\Response\JsonResponse;
 use App\Services\GroupService;
 use App\Services\MessageService;
 use App\Services\UserService;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Tools\DsnParser;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
@@ -84,8 +87,11 @@ return [
             $settings['cache_dir']
         );
 
+        $dsnParser = new DsnParser();
+        $params = $settings['connection']['url'] ? $dsnParser->parse($settings['connection']['url']) : $settings['connection'];
+
         // Configure the database connection
-        $connection = DriverManager::getConnection($settings['connection'], $config);
+        $connection = DriverManager::getConnection($params, $config);
 
         // Create the EntityManager
         return new EntityManager($connection, $config);
@@ -95,8 +101,15 @@ return [
         return new UserService($container->get(EntityManagerInterface::class));
     },
 
+    GroupRepository::class => static function (EntityManagerInterface $entityManager) {
+        return $entityManager->getRepository(Group::class);
+    },
+
     GroupService::class => static function (ContainerInterface $container) {
-        return new GroupService($container->get(EntityManagerInterface::class));
+        return new GroupService(
+            $container->get(EntityManagerInterface::class),
+            $container->get(GroupRepository::class),
+        );
     },
 
     MessageService::class => static function (ContainerInterface $container) {

@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Response\JsonResponse;
+use App\Services\GroupService;
+use App\Services\UserService;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class GroupController
 {
+    public function __construct(
+        private JsonResponse $response,
+        protected GroupService $groupService
+    ) {
+    }
+
     #[OA\Get(
         path: "/groups",
         summary: "List all groups",
@@ -27,6 +36,65 @@ class GroupController
     )]
     public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        // Code to retrieve and return a list of groups
+        $groups = $this->groupService->getAllGroups();
+
+        return $this->response->json($response, $groups);
+    }
+
+
+    #[OA\Post(
+        path: "/groups",
+        summary: "Create a new chat group",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["name"],
+                properties: [
+                    new OA\Property(
+                        property: "name",
+                        description: "The name of the chat group",
+                        type: "string",
+                        example: "Developers Group"
+                    )
+                ]
+            )
+        ),
+        tags: ["Groups"],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Chat group created successfully",
+                content: new OA\JsonContent(ref: "#/components/schemas/Group")
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Validation error",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "errors",
+                            description: "Validation error details",
+                            type: "object",
+                            additionalProperties: new OA\AdditionalProperties(
+                                properties: [
+                                    new OA\Property(
+                                        type: "array",
+                                        items: new OA\Items(type: "string")
+                                    )
+                                ]
+                            ),
+                        )
+                    ]
+                )
+            )
+        ]
+    )]
+    public function create(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        /** @var array<string, mixed> $data */
+        $data = $request->getParsedBody();
+        $group = $this->groupService->createGroup($data['name']);
+
+        return $this->response->json($response, $group);
     }
 }

@@ -11,11 +11,11 @@ if [ ! -d "vendor" ]; then
   composer install --no-dev --optimize-autoloader
 fi
 
-if [ ! -f "chat.sqlite" ]; then
+if [ ! -f "data/chat.sqlite" ]; then
   echo "Add sqlite db"
-  touch chat.sqlite
-  chown www-data:www-data chat.sqlite
-  chmod 777 chat.sqlite
+  touch data/chat.sqlite
+  chown www-data:www-data data -R
+  chmod 777 data -R
   vendor/bin/doctrine-migrations migrate
 fi
 

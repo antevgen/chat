@@ -17,24 +17,24 @@ use Respect\Validation\Validatable;
 class ValidationMiddleware implements MiddlewareInterface
 {
     /**
-     * @var array<string, Validatable>
+     * @param array<string, Validatable> $rules
      */
-    private array $rules = [];
-
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly JsonResponse $response,
+        private readonly array $rules
     ) {
     }
 
     /**
-     * @param  array<string, Validatable> $rules
+     * @param array<string, Validatable> $rules
      */
-    public function setRules(array $rules): self
-    {
-        $this->rules = $rules;
-
-        return $this;
+    public static function createWithRules(
+        ResponseFactoryInterface $responseFactory,
+        JsonResponse $response,
+        array $rules
+    ): self {
+        return new self($responseFactory, $response, $rules);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -51,7 +51,7 @@ class ValidationMiddleware implements MiddlewareInterface
             try {
                 $rule->assert($data[$field] ?? null);
             } catch (ValidationException $exception) {
-                $errors[$field] = $exception->getMessage();
+                $errors[$field] = $exception->getMessages();
             }
         }
 
