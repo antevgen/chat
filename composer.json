@@ -45,6 +45,7 @@
         ],
         "stan": "vendor/bin/phpstan analyze --memory-limit=1024M",
         "code-style": "vendor/bin/phpcs",
-        "code-style-fix": "vendor/bin/phpcbf"
+        "code-style-fix": "vendor/bin/phpcbf",
+        "test": "phpunit --configuration phpunit.xml --do-not-cache-result --colors=always --display-warnings --display-deprecations --no-coverage"
     }
 }

@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+use Dotenv\Dotenv;
 use Psr\Log\LogLevel;
+
+$dotenv = Dotenv::createImmutable(__DIR__. '/../');
+$dotenv->load();
 
 return [
     'error' => [

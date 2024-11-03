@@ -18,6 +18,7 @@ use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
@@ -39,6 +40,10 @@ return [
     },
 
     ResponseFactoryInterface::class => static function (ContainerInterface $container) {
+        return $container->get(Psr17Factory::class);
+    },
+
+    ServerRequestFactoryInterface::class => static function (ContainerInterface $container) {
         return $container->get(Psr17Factory::class);
     },
 
