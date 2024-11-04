@@ -2,30 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Controllers\Api;
+namespace Http\Controllers\Api;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Tests\BaseFeatureTestCase;
-use Tests\Fixtures\GroupFixture;
+use Tests\Fixtures\UserFixture;
 
-class GroupControllerTest extends BaseFeatureTestCase
+class UserControllerTest extends BaseFeatureTestCase
 {
     public function testList(): void
     {
         $this->loadFixtures();
 
-        $request = $this->createRequest('GET', '/api/groups');
+        $request = $this->createRequest('GET', '/api/users');
         $response = $this->app->handle($request);
 
         $expectedResult = [
             'data' => [
                 [
                     'id' => 1,
-                    'name' => 'Group 1',
+                    'username' => 'editor',
+                    'email' => 'editor@no-reply.com',
                 ],
                 [
                     'id' => 2,
-                    'name' => 'Group 2',
+                    'username' => 'administrator',
+                    'email' => 'administrator@no-reply.com',
                 ],
             ],
             'meta' => [
@@ -43,16 +45,18 @@ class GroupControllerTest extends BaseFeatureTestCase
     public function testCreate(): void
     {
         $data = [
-            'name' => 'Group 1',
+            'username' => 'administrator',
+            'email' => 'administrator@no-reply.com',
         ];
-        $request = $this->createRequest('POST', '/api/groups')
+        $request = $this->createRequest('POST', '/api/users')
             ->withParsedBody($data)
             ->withHeader('Accept', 'application/json');
         $response = $this->app->handle($request);
 
         $expectedResult = [
             'id' => 1,
-            'name' => 'Group 1',
+            'username' => 'administrator',
+            'email' => 'administrator@no-reply.com',
         ];
 
         $this->assertSame(StatusCodeInterface::STATUS_CREATED, $response->getStatusCode());
@@ -62,9 +66,9 @@ class GroupControllerTest extends BaseFeatureTestCase
     public function testCreateWithInvalidInput(): void
     {
         $data = [
-            'name' => 'Gr',
+            'email' => 'tr.com',
         ];
-        $request = $this->createRequest('POST', '/api/groups')
+        $request = $this->createRequest('POST', '/api/users')
             ->withParsedBody($data)
             ->withHeader('Accept', 'application/json');
         $response = $this->app->handle($request);
@@ -74,7 +78,7 @@ class GroupControllerTest extends BaseFeatureTestCase
 
     protected function loadFixtures(): void
     {
-        $groupFixture = new GroupFixture();
-        $groupFixture->load($this->entityManager);
+        $userFixture = new UserFixture();
+        $userFixture->load($this->entityManager);
     }
 }

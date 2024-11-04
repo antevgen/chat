@@ -55,11 +55,15 @@ return static function (App $app) {
         });
 
         $apiGroup->group('/users', function (RouteCollectorProxy $group) use ($app) {
+            $group->get('', [UserController::class, 'list']);
             $group->post('', [UserController::class, 'create'])
                 ->add(ValidationMiddleware::createWithRules(
                     $app->getContainer()?->get(ResponseFactoryInterface::class),
                     $app->getContainer()?->get(JsonResponse::class),
-                    ['username' => Assert::alnum()->noWhitespace()->length(3, 15)]
+                    [
+                        'username' => Assert::alnum()->noWhitespace()->length(3, 15),
+                        'email' => Assert::email()->length(1, 255),
+                    ]
                 ));
         });
 

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\GroupRepository;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Attributes as OA;
 
@@ -33,6 +36,18 @@ class Group
     )]
     private string $name;
 
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: "groups")]
+    private Collection $members;
+
+    public function __construct()
+    {
+        $this->members = new ArrayCollection();
+        $this->createdAt = new DateTime();
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -51,6 +66,42 @@ class Group
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(User $user): void
+    {
+        if (!$this->members->contains($user)) {
+            $this->members->add($user);
+            $user->addGroup($this);
+        }
+    }
+
+    public function removeMember(User $user): void
+    {
+        if ($this->members->contains($user)) {
+            $this->members->removeElement($user);
+            $user->removeGroup($this);
+        }
+    }
+
+    public function setMembers(Collection $members): void
+    {
+        $this->members = $members;
     }
 
     /**

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Group;
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
 /**
- * @extends EntityRepository<Group>
+ * @extends EntityRepository<User>
  */
-class GroupRepository extends EntityRepository
+class UserRepository extends EntityRepository
 {
     public function findAllQuery(): Query
     {

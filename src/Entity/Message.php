@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -15,11 +16,14 @@ final class Message
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $subject;
+
     #[ORM\Column(type: 'text')]
     private string $content;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTime $createdAt;
+    private DateTime $createdAt;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
@@ -59,14 +63,24 @@ final class Message
         $this->user = $user;
     }
 
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
+    }
+
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(string $subject): void
+    {
+        $this->subject = $subject;
     }
 
     public function getContent(): string

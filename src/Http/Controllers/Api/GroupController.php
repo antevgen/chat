@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Response\JsonResponse;
 use App\Services\GroupService;
-use App\Services\UserService;
+use Fig\Http\Message\StatusCodeInterface;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,15 +14,31 @@ use Psr\Http\Message\ServerRequestInterface;
 class GroupController
 {
     public function __construct(
-        private JsonResponse $response,
+        private readonly JsonResponse $response,
         protected GroupService $groupService
     ) {
     }
 
     #[OA\Get(
         path: "/groups",
-        summary: "List all groups",
+        summary: "Get a paginated list of groups",
         tags: ["Groups"],
+        parameters: [
+            new OA\Parameter(
+                name: 'page',
+                description: 'Page number for pagination',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 1)
+            ),
+            new OA\Parameter(
+                name: 'limit',
+                description: 'Number of items per page',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 10)
+            ),
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -36,7 +52,9 @@ class GroupController
     )]
     public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $groups = $this->groupService->getAllGroups();
+        $page = (int) ($request->getQueryParams()['page'] ?? 1);
+        $limit = (int) ($request->getQueryParams()['limit'] ?? 10);
+        $groups = $this->groupService->getPaginatedGroups($page, $limit);
 
         return $this->response->json($response, $groups);
     }
@@ -95,6 +113,7 @@ class GroupController
         $data = $request->getParsedBody();
         $group = $this->groupService->createGroup($data['name']);
 
-        return $this->response->json($response, $group);
+        return $this->response->json($response, $group)
+            ->withStatus(StatusCodeInterface::STATUS_CREATED);
     }
 }

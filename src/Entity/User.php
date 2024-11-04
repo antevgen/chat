@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
 final class User
 {
@@ -19,7 +23,20 @@ final class User
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private string $token;
+    private string $email;
+
+    #[ORM\Column(type: 'datetime')]
+    private DateTime $createdAt;
+
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: "members")]
+    #[ORM\JoinTable(name: 'user_group')]
+    private Collection $groups;
+
+    public function __construct()
+    {
+        $this->groups = new ArrayCollection();
+        $this->createdAt = new DateTime();
+    }
 
     public function getId(): int
     {
@@ -41,13 +58,61 @@ final class User
         $this->username = $username;
     }
 
-    public function getToken(): string
+    public function geEmail(): string
     {
-        return $this->token;
+        return $this->email;
     }
 
-    public function setToken(string $token): void
+    public function setEmail(string $email): void
     {
-        $this->token = $token;
+        $this->email = $email;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    public function getGroups(): Collection
+    {
+        return $this->groups;
+    }
+
+    public function addGroup(Group $group): void
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+            $group->addMember($this);
+        }
+    }
+
+    public function removeGroup(Group $group): void
+    {
+        if ($this->groups->contains($group)) {
+            $this->groups->removeElement($group);
+            $group->removeMember($this);
+        }
+    }
+
+    public function setGroups(Collection $groups): void
+    {
+        $this->groups = $groups;
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'email' => $this->email,
+        ];
     }
 }
