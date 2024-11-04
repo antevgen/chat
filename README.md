@@ -66,8 +66,71 @@ To interact with the API, you can use tools like [Postman](https://www.postman.c
 
 Here are the available API endpoints for the chat application:
 
+#### 1. Create a New Group
 
-**Note**: Ensure to include a user identifier (token, username, or ID) in the request headers or body as required by your application logic.
+- **URL**: `POST /groups`
+- **Description**: Creates a new chat group.
+- **Request Body**:
+  ```json
+  {
+    "name": "Group Name",
+    "user_id": 123
+  }
+  ```
+- **Responses**:
+   - `201 Created`: Group created successfully.
+   - `422 Unprocessable Entity`: Validation error details.
+
+#### 2. List Groups
+
+- **URL**: `GET /groups`
+- **Description**: Retrieves a paginated list of chat groups.
+- **Query Parameters**:
+   - `page` (optional): Page number for pagination, default is `1`.
+   - `limit` (optional): Number of items per page, default is `10`.
+- **Responses**:
+   - `200 OK`: List of groups with pagination.
+
+#### 3. Join a Group
+
+- **URL**: `POST /groups/{id}/members`
+- **Description**: Joins a specified group by group ID.
+- **Request Body**:
+  ```json
+  {
+    "user_id": 123
+  }
+  ```
+- **Responses**:
+   - `200 OK`: Successfully joined group.
+   - `409 Conflict`: User is already a member.
+   - `404 Not Found`: Group not found.
+
+#### 4. Send a Message in a Group
+
+- **URL**: `POST /groups/{id}/messages`
+- **Description**: Sends a message to a specified group by group ID.
+- **Request Body**:
+  ```json
+  {
+    "user_id": 123,
+    "message": "Hello, everyone!"
+  }
+  ```
+- **Responses**:
+   - `201 Created`: Message sent successfully.
+   - `404 Not Found`: Group or user not found.
+
+#### 5. List Messages in a Group
+
+- **URL**: `GET /groups/{id}/messages`
+- **Description**: Retrieves all messages in a specified group by group ID.
+- **Query Parameters**:
+   - `page` (optional): Page number for pagination, default is `1`.
+   - `limit` (optional): Number of items per page, default is `10`.
+- **Responses**:
+   - `200 OK`: List of messages in the group with pagination.
+
 
 ## Running Tests
 
