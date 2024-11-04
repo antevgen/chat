@@ -14,7 +14,6 @@ use Psr\Log\InvalidArgumentException;
 class UserService
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
     ) {
     }
@@ -31,7 +30,7 @@ class UserService
         $pagerfanta->setCurrentPage($page);
 
         $users = array_map(
-            fn($group) => $group->toArray(),
+            fn($user) => $user->toArray(),
             iterator_to_array($pagerfanta->getCurrentPageResults())
         );
 
@@ -59,9 +58,13 @@ class UserService
         $user = new User();
         $user->setUsername($username);
         $user->setEmail($email);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        $this->userRepository->save($user);
 
         return $user;
+    }
+
+    public function getUser(int $userId): User
+    {
+        return $this->userRepository->find($userId);
     }
 }

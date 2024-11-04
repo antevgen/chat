@@ -64,13 +64,35 @@ return static function (App $app) {
             $group->get('{id}', [GroupController::class, 'show']);
 
             $group->post('/{id}/members', [GroupController::class, 'join'])
+                ->add(ValidationMiddleware::createWithRules(
+                    $app->getContainer()?->get(ResponseFactoryInterface::class),
+                    $app->getContainer()?->get(JsonResponse::class),
+                    [
+                        'user_id' => Assert::notBlank()->intVal(),
+                    ]
+                ))
                 ->add(new UserExistsMiddleware(
                     $app->getContainer()?->get(UserRepository::class),
                     $app->getContainer()?->get(JsonResponse::class),
                     $app->getContainer()?->get(ResponseFactoryInterface::class),
                 ));
 
-            $group->get('/{id}/messages', [MessageController::class, 'getMessagesByGroup']);
+            $group->get('/{id}/messages', [MessageController::class, 'list']);
+            $group->post('/{id}/messages', [MessageController::class, 'create'])
+                ->add(ValidationMiddleware::createWithRules(
+                    $app->getContainer()?->get(ResponseFactoryInterface::class),
+                    $app->getContainer()?->get(JsonResponse::class),
+                    [
+                        'subject' => Assert::notBlank()->length(3, 55),
+                        'content' => Assert::notBlank()->length(3, 255),
+                        'user_id' => Assert::notBlank()->intVal(),
+                    ]
+                ))
+                ->add(new UserExistsMiddleware(
+                    $app->getContainer()?->get(UserRepository::class),
+                    $app->getContainer()?->get(JsonResponse::class),
+                    $app->getContainer()?->get(ResponseFactoryInterface::class),
+                ));
         });
 
         $apiGroup->group('/users', function (RouteCollectorProxy $group) use ($app) {
@@ -84,10 +106,6 @@ return static function (App $app) {
                         'email' => Assert::email()->length(1, 255),
                     ]
                 ));
-        });
-
-        $apiGroup->group('/messages', function (RouteCollectorProxy $messages) {
-            $messages->post('/{group_id}', [MessageController::class, 'postMessage']);
         });
     });
 };

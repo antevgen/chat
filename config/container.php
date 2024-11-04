@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 use App\Entity\Group;
+use App\Entity\Message;
 use App\Entity\User;
 use App\Middleware\ExceptionMiddleware;
-use App\Middleware\ValidationMiddleware;
 use App\Repository\GroupRepository;
+use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use App\Response\JsonResponse;
 use App\Services\GroupService;
@@ -98,7 +99,6 @@ return [
 
     UserService::class => static function (ContainerInterface $container) {
         return new UserService(
-            $container->get(EntityManagerInterface::class),
             $container->get(UserRepository::class),
         );
     },
@@ -115,7 +115,11 @@ return [
         );
     },
 
+    MessageRepository::class => static function (EntityManagerInterface $entityManager) {
+        return $entityManager->getRepository(Message::class);
+    },
+
     MessageService::class => static function (ContainerInterface $container) {
-        return new MessageService($container->get(EntityManagerInterface::class));
+        return new MessageService($container->get(MessageRepository::class));
     },
 ];

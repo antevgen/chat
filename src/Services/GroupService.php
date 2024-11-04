@@ -61,8 +61,7 @@ class GroupService
         $user = $this->userRepository->find($userId);
         $group->addMember($user);
 
-        $this->entityManager->persist($group);
-        $this->entityManager->flush();
+        $this->groupRepository->save($group);
 
         return $group;
     }
