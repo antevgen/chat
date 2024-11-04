@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Respect\Validation\Exceptions\ValidationException;
+use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validatable;
 
 class ValidationMiddleware implements MiddlewareInterface
@@ -50,7 +50,7 @@ class ValidationMiddleware implements MiddlewareInterface
         foreach ($this->rules as $field => $rule) {
             try {
                 $rule->assert($data[$field] ?? null);
-            } catch (ValidationException $exception) {
+            } catch (NestedValidationException $exception) {
                 $errors[$field] = $exception->getMessages();
             }
         }

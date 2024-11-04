@@ -5,7 +5,9 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
+use App\Middleware\UserExistsMiddleware;
 use App\Middleware\ValidationMiddleware;
+use App\Repository\UserRepository;
 use App\Response\JsonResponse;
 use Nyholm\Psr7\Response;
 use OpenApi\Generator;
@@ -49,6 +51,13 @@ return static function (App $app) {
                     $app->getContainer()?->get(ResponseFactoryInterface::class),
                     $app->getContainer()?->get(JsonResponse::class),
                     ['name' => Assert::notBlank()->length(3, 55)]
+                ));
+
+            $group->post('/{id}/members', [GroupController::class, 'join'])
+                ->add(new UserExistsMiddleware(
+                    $app->getContainer()?->get(UserRepository::class),
+                    $app->getContainer()?->get(JsonResponse::class),
+                    $app->getContainer()?->get(ResponseFactoryInterface::class),
                 ));
 
             $group->get('/{id}/messages', [MessageController::class, 'getMessagesByGroup']);

@@ -28,6 +28,9 @@ final class User
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
+    /**
+     * @var Collection<int, Group>
+     */
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: "members")]
     #[ORM\JoinTable(name: 'user_group')]
     private Collection $groups;
@@ -78,6 +81,9 @@ final class User
         $this->createdAt = $createdAt;
     }
 
+    /**
+     * @return Collection<int, Group>
+     */
     public function getGroups(): Collection
     {
         return $this->groups;
@@ -99,6 +105,9 @@ final class User
         }
     }
 
+    /**
+     * @param Collection<int, Group> $groups
+     */
     public function setGroups(Collection $groups): void
     {
         $this->groups = $groups;

@@ -73,13 +73,6 @@ return [
         );
     },
 
-    ValidationMiddleware::class => static function (ContainerInterface $container) {
-        return new ValidationMiddleware(
-            $container->get(ResponseFactoryInterface::class),
-            $container->get(JsonResponse::class),
-        );
-    },
-
     EntityManagerInterface::class => static function (ContainerInterface $container) {
         $settings = $container->get('settings')['doctrine'];
 
@@ -118,6 +111,7 @@ return [
         return new GroupService(
             $container->get(EntityManagerInterface::class),
             $container->get(GroupRepository::class),
+            $container->get(UserRepository::class),
         );
     },
 

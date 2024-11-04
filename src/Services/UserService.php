@@ -18,6 +18,9 @@ class UserService
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getPaginatedList(int $page = 1, int $limit = 10): array
     {
         $adapter = new QueryAdapter($this->userRepository->findAllQuery());
