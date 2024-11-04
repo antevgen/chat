@@ -67,15 +67,21 @@ class GroupController
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ["name"],
+                required: ["name", "user_id"],
                 properties: [
                     new OA\Property(
                         property: "name",
                         description: "The name of the chat group",
                         type: "string",
                         example: "Developers Group"
+                    ),
+                    new OA\Property(
+                        property: "user_id",
+                        description: "ID of the user joining the group",
+                        type: "integer",
+                        example: 123
                     )
-                ]
+                ],
             )
         ),
         tags: ["Groups"],
@@ -112,7 +118,7 @@ class GroupController
     {
         /** @var array<string, mixed> $data */
         $data = $request->getParsedBody();
-        $group = $this->groupService->createGroup($data['name']);
+        $group = $this->groupService->createGroup($data['name'], $data['user_id']);
 
         return $this->response->json($response, $group)
             ->withStatus(StatusCodeInterface::STATUS_CREATED);

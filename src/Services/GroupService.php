@@ -48,10 +48,14 @@ class GroupService
         ];
     }
 
-    public function createGroup(string $name): Group
+    public function createGroup(string $name, int $userId): Group
     {
         $group = new Group();
         $group->setName($name);
+        /** @var User $user */
+        $user = $this->userRepository->find($userId);
+        $group->addMember($user);
+
         $this->entityManager->persist($group);
         $this->entityManager->flush();
 
@@ -63,7 +67,7 @@ class GroupService
         return $this->groupRepository->find($groupId);
     }
 
-    public function isExistingMember(Group $group, mixed $userId): bool
+    public function isExistingMember(Group $group, int $userId): bool
     {
         return $group->getMembers()->filter(function (User $user) use ($userId) {
             return $user->getId() === $userId;

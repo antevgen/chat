@@ -9,20 +9,38 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
+#[OA\Schema(
+    schema: "User",
+    title: "User",
+    description: "User entity representing a group member"
+)]
 final class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[OA\Property(
+        description: "ID of the user",
+        example: 1
+    )]
     private int $id;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[OA\Property(
+        description: "Username of the user",
+        example: "johndoe"
+    )]
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[OA\Property(
+        description: "Email of the user",
+        example: "johndoe@test.com"
+    )]
     private string $email;
 
     #[ORM\Column(type: 'datetime')]

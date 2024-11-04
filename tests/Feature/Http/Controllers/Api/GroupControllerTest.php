@@ -23,10 +23,12 @@ class GroupControllerTest extends BaseFeatureTestCase
                 [
                     'id' => 1,
                     'name' => 'Group 1',
+                    'members' => [],
                 ],
                 [
                     'id' => 2,
                     'name' => 'Group 2',
+                    'members' => [],
                 ],
             ],
             'meta' => [
@@ -43,8 +45,10 @@ class GroupControllerTest extends BaseFeatureTestCase
 
     public function testCreate(): void
     {
+        $this->loadUserFixtures();
         $data = [
             'name' => 'Group 1',
+            'user_id' => 1,
         ];
         $request = $this->createRequest('POST', '/api/groups')
             ->withParsedBody($data)
@@ -54,6 +58,13 @@ class GroupControllerTest extends BaseFeatureTestCase
         $expectedResult = [
             'id' => 1,
             'name' => 'Group 1',
+            'members' => [
+                [
+                    'id' => 1,
+                    'username' => 'editor',
+                    'email' => 'editor@no-reply.com',
+                ],
+            ],
         ];
 
         $this->assertSame(StatusCodeInterface::STATUS_CREATED, $response->getStatusCode());
@@ -62,8 +73,10 @@ class GroupControllerTest extends BaseFeatureTestCase
 
     public function testCreateWithInvalidInput(): void
     {
+        $this->loadUserFixtures();
         $data = [
             'name' => 'Gr',
+            'user_id' => 1,
         ];
         $request = $this->createRequest('POST', '/api/groups')
             ->withParsedBody($data)

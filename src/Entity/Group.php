@@ -43,6 +43,11 @@ class Group
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: "groups")]
+    #[OA\Property(
+        description: "Members of the group",
+        type: "array",
+        items: new OA\Items(ref: "#/components/schemas/User")
+    )]
     private Collection $members;
 
     public function __construct()
@@ -121,6 +126,7 @@ class Group
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'members' => array_map(static fn(User $user) => $user->toArray(), $this->members->toArray()),
         ];
     }
 }

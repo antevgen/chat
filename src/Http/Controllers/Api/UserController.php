@@ -42,14 +42,11 @@ class UserController
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'List of user groups',
+                description: 'List of users',
                 content: new OA\JsonContent(
                     type: 'array',
                     items: new OA\Items(
-                        properties: [
-                            new OA\Property(property: 'id', type: 'integer', example: 1),
-                            new OA\Property(property: 'name', type: 'string', example: 'Group A')
-                        ]
+                        ref: "#/components/schemas/User"
                     )
                 )
             ),

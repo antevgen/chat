@@ -50,8 +50,18 @@ return static function (App $app) {
                 ->add(ValidationMiddleware::createWithRules(
                     $app->getContainer()?->get(ResponseFactoryInterface::class),
                     $app->getContainer()?->get(JsonResponse::class),
-                    ['name' => Assert::notBlank()->length(3, 55)]
+                    [
+                        'name' => Assert::notBlank()->length(3, 55),
+                        'user_id' => Assert::notBlank()->intVal(),
+                    ]
+                ))
+                ->add(new UserExistsMiddleware(
+                    $app->getContainer()?->get(UserRepository::class),
+                    $app->getContainer()?->get(JsonResponse::class),
+                    $app->getContainer()?->get(ResponseFactoryInterface::class),
                 ));
+
+            $group->get('{id}', [GroupController::class, 'show']);
 
             $group->post('/{id}/members', [GroupController::class, 'join'])
                 ->add(new UserExistsMiddleware(
