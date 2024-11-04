@@ -10,14 +10,19 @@ use App\Entity\User;
 use App\Repository\MessageRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Psr\Log\InvalidArgumentException;
 
 class MessageService
 {
     public function __construct(
         private MessageRepository $messageRepository,
+        private GroupService $groupService,
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function fetchMessagesByGroupId(int $groupId, int $page = 1, int $limit = 10): array
     {
         $adapter = new QueryAdapter($this->messageRepository->findMessagesByGroupId($groupId));
@@ -48,6 +53,16 @@ class MessageService
         Group $group,
         User $user
     ): Message {
+        if (!$this->groupService->isExistingMember($group, $user->getId())) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    "User %d is not member of group %d.",
+                    $user->getId(),
+                    $group->getId()
+                )
+            );
+        }
+
         $message = new Message();
         $message->setSubject($subject);
         $message->setContent($content);

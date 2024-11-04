@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
-use App\Repository\MessageRepository;
 use App\Response\JsonResponse;
 use App\Services\GroupService;
 use App\Services\MessageService;
@@ -13,6 +12,7 @@ use Fig\Http\Message\StatusCodeInterface;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\InvalidArgumentException;
 
 class MessageController
 {
@@ -101,7 +101,13 @@ class MessageController
                 ->withStatus(StatusCodeInterface::STATUS_NOT_FOUND);
         }
 
-        $message = $this->messageService->sendMessage($subject, $content, $group, $user);
+        try {
+            $message = $this->messageService->sendMessage($subject, $content, $group, $user);
+        } catch (InvalidArgumentException $exception) {
+            return $this->response->json($response, ['message' => $exception->getMessage()])
+                ->withStatus(StatusCodeInterface::STATUS_CONFLICT);
+        }
+
         return $this->response->json($response, $message)
             ->withStatus(StatusCodeInterface::STATUS_CREATED);
     }

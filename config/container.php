@@ -120,6 +120,9 @@ return [
     },
 
     MessageService::class => static function (ContainerInterface $container) {
-        return new MessageService($container->get(MessageRepository::class));
+        return new MessageService(
+            $container->get(MessageRepository::class),
+            $container->get(GroupService::class)
+        );
     },
 ];
