@@ -76,6 +76,21 @@ class UserControllerTest extends BaseFeatureTestCase
         $this->assertSame(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
+    public function testCreateWithExistingUsername(): void
+    {
+        $this->loadFixtures();
+        $data = [
+            'username' => 'editor',
+            'email' => 'test@tr.com',
+        ];
+        $request = $this->createRequest('POST', '/api/users')
+            ->withParsedBody($data)
+            ->withHeader('Accept', 'application/json');
+        $response = $this->app->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_CONFLICT, $response->getStatusCode());
+    }
+
     protected function loadFixtures(): void
     {
         $userFixture = new UserFixture();

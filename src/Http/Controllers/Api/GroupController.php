@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
-use App\Entity\User;
 use App\Response\JsonResponse;
 use App\Services\GroupService;
 use Fig\Http\Message\StatusCodeInterface;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\InvalidArgumentException;
 
 class GroupController
 {
@@ -59,7 +59,6 @@ class GroupController
 
         return $this->response->json($response, $groups);
     }
-
 
     #[OA\Post(
         path: "/groups",
@@ -111,6 +110,20 @@ class GroupController
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 409,
+                description: "Conflict error when input data is not unique",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "message",
+                            description: "Conflict message details",
+                            type: "string",
+                            example: "Name of group already exists."
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -118,7 +131,12 @@ class GroupController
     {
         /** @var array<string, mixed> $data */
         $data = $request->getParsedBody();
-        $group = $this->groupService->createGroup($data['name'], $data['user_id']);
+        try {
+            $group = $this->groupService->createGroup($data['name'], $data['user_id']);
+        } catch (InvalidArgumentException $exception) {
+            return $this->response->json($response, ['message' => $exception->getMessage()])
+                ->withStatus(StatusCodeInterface::STATUS_CONFLICT);
+        }
 
         return $this->response->json($response, $group)
             ->withStatus(StatusCodeInterface::STATUS_CREATED);

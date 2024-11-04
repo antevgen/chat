@@ -86,6 +86,22 @@ class GroupControllerTest extends BaseFeatureTestCase
         $this->assertSame(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, $response->getStatusCode());
     }
 
+    public function testCreateWithExistingName(): void
+    {
+        $this->loadGroupFixtures();
+        $this->loadUserFixtures();
+        $data = [
+            'name' => 'Group 1',
+            'user_id' => 1,
+        ];
+        $request = $this->createRequest('POST', '/api/groups')
+            ->withParsedBody($data)
+            ->withHeader('Accept', 'application/json');
+        $response = $this->app->handle($request);
+
+        $this->assertSame(StatusCodeInterface::STATUS_CONFLICT, $response->getStatusCode());
+    }
+
     public function testJoinNonExistentUser(): void
     {
         $this->loadGroupFixtures();

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Response\JsonResponse;
 use App\Services\UserService;
 use Fig\Http\Message\StatusCodeInterface;
+use InvalidArgumentException;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -107,6 +108,20 @@ class UserController
                         )
                     ]
                 )
+            ),
+            new OA\Response(
+                response: 409,
+                description: "Conflict error when input data is not unique",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "message",
+                            description: "Conflict message details",
+                            type: "string",
+                            example: "Username already exists."
+                        )
+                    ]
+                )
             )
         ]
     )]
@@ -114,7 +129,12 @@ class UserController
     {
         /** @var array<string, mixed> $data */
         $data = $request->getParsedBody();
-        $group = $this->userService->createUser($data['username'], $data['email']);
+        try {
+            $group = $this->userService->createUser($data['username'], $data['email']);
+        } catch (InvalidArgumentException $exception) {
+            return $this->response->json($response, ['message' => $exception->getMessage()])
+                ->withStatus(StatusCodeInterface::STATUS_CONFLICT);
+        }
 
         return $this->response->json($response, $group)
             ->withStatus(StatusCodeInterface::STATUS_CREATED);

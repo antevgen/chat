@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Psr\Log\InvalidArgumentException;
 
 class GroupService
 {
@@ -50,6 +51,10 @@ class GroupService
 
     public function createGroup(string $name, int $userId): Group
     {
+        if ($this->groupRepository->findOneBy(['name' => $name])) {
+            throw new InvalidArgumentException("Email already exists.");
+        }
+
         $group = new Group();
         $group->setName($name);
         /** @var User $user */

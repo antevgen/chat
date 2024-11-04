@@ -49,8 +49,7 @@ final class User
     /**
      * @var Collection<int, Group>
      */
-    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: "members")]
-    #[ORM\JoinTable(name: 'user_group')]
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: "members")]
     private Collection $groups;
 
     public function __construct()

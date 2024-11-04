@@ -48,6 +48,7 @@ class Group
         type: "array",
         items: new OA\Items(ref: "#/components/schemas/User")
     )]
+    #[ORM\JoinTable(name: 'group_users')]
     private Collection $members;
 
     public function __construct()

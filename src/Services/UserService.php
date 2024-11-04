@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Psr\Log\InvalidArgumentException;
 
 class UserService
 {
@@ -47,6 +48,14 @@ class UserService
 
     public function createUser(string $username, string $email): User
     {
+        if ($this->userRepository->findOneBy(['email' => $email])) {
+            throw new InvalidArgumentException("Email already exists.");
+        }
+
+        if ($this->userRepository->findOneBy(['username' => $username])) {
+            throw new InvalidArgumentException("Username already exists.");
+        }
+
         $user = new User();
         $user->setUsername($username);
         $user->setEmail($email);
