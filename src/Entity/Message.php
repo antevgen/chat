@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
     title: "Message",
     description: "Message entity representing a chat message"
 )]
-final class Message
+class Message
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

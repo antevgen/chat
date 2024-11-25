@@ -18,7 +18,7 @@ use OpenApi\Attributes as OA;
     title: "User",
     description: "User entity representing a group member"
 )]
-final class User
+class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

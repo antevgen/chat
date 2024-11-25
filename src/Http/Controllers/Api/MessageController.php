@@ -56,7 +56,7 @@ class MessageController
         tags: ["Messages"],
         parameters: [
             new OA\Parameter(
-                name: 'gid',
+                name: 'id',
                 description: 'ID of the group to send the message to',
                 in: 'path',
                 required: true,
