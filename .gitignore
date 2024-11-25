@@ -31,6 +31,7 @@ docker-compose.override.yml
 phpunit.xml.dist
 /build/
 /coverage/
+/var
 
 # Logs and cache
 logs/*
